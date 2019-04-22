@@ -1,13 +1,29 @@
-L + L(M + F) => K
-B => A
-C + E => B
-G + H => F
-I + J => G
+A => B
+B => C
+C => D
+D => E
+E => F
+F => G
 G => H
+H => I
+I => J
+J => K
+K => L
+L => M
+M => N
+N => O
+O => P
+P => Q
+Q => R
+R => S
+S => T
+T => U
+U => V
+V => W
+W => X
+X => Y
+Y => Z
 
-O + P => L + N
-N => M
+=A
 
-=DEIJP #!!!! AFP will be True.(file already changed)
-
-?AFKP
+?Z

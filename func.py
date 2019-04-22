@@ -1,17 +1,18 @@
 import sys
 import re
 import string
+from node import *
 import pprint
 
-class BColors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+# class BColors:
+#     HEADER = '\033[95m'
+#     OKBLUE = '\033[94m'
+#     OKGREEN = '\033[92m'
+#     WARNING = '\033[93m'
+#     FAIL = '\033[91m'
+#     ENDC = '\033[0m'
+#     BOLD = '\033[1m'
+#     UNDERLINE = '\033[4m'
 
 
 data = {'var': dict.fromkeys(string.ascii_uppercase, False),
@@ -29,12 +30,19 @@ def error(line):
 def check_order(line):
     i = 0
     for c in line:
-        d = i % 2
-        if c == '!' or c == '(' or c == ')':
+        if c == '!' or c == '(':
+            if i % 2 == 1:
+                error("Invalid order: '{}'".format(" ".join(line)))
+            continue
+        if c == ')':
+            if i % 2 == 0:
+                error("Invalid order: '{}'".format(" ".join(line)))
             continue
         if i % 2 == 0 and c not in data['var']:
             error("Invalid order: '{}'".format(" ".join(line)))
         i += 1
+    if i % 2 == 0:
+        error("Invalid order: '{}'".format(" ".join(line)))
     return
 
 
@@ -114,21 +122,25 @@ def handle_input(f):
             error("Invalid line: '{}'!".format(line.replace('\n', '')))
 
 
-def handle_op(result, c):
-    if result and c == '+':
-        return True
+def inv(q):
+    return int(not q)
 
 
-def is_true(rule):
-    result = False
-    false = False
-    for c in rule:
-        if c in data['var']:
-            result = count_one(c)
-        if c in operation:
-            if result and c == '+':
-                return True
-    return result
+def count_expresion(line):
+    for i in range(0, len(line)):
+        if line[i] in data['var']:
+            if data['var'][line[i]]:
+                buff = 1
+            else:
+                buff = count_one(line[i])
+            line = line.replace(line[i], str(int(buff)), 1)
+        if line[i] is '+':
+            line = line.replace(line[i], '&', 1)
+    while '!' in line:
+        for i in range(0, len(line)):
+            if line[i] == '!':
+                line = line[:i] + ' inv(' + line[i + 1] + ') ' + line[i + 2:]
+    return eval(line)
 
 
 def count_one(one):
@@ -136,7 +148,7 @@ def count_one(one):
         return True
     for rule in data['rules']:
         if one in data['rules'][rule]:
-            if is_true(rule):
+            if count_expresion(rule):
                 return True
     return False
 
