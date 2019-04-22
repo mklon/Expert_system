@@ -1,7 +1,6 @@
 import sys
 import re
 import string
-from node import *
 import pprint
 
 # class BColors:
@@ -18,12 +17,13 @@ import pprint
 data = {'var': dict.fromkeys(string.ascii_uppercase, False),
         'rules': {},
         'request': [],
-        'result': {}}
+        'result': {},
+        'last_rule': str()}
 operation = ['(', ')', '!', '+', '|', '^']
 
 
 def error(line):
-    print('\033[91m' + re.split(':', line)[0] + ':\033[0m' + re.split(':', line)[1])
+    print('\033[91m' + line + '\033[0m')
     sys.exit(1)
 
 
@@ -122,6 +122,13 @@ def handle_input(f):
             error("Invalid line: '{}'!".format(line.replace('\n', '')))
 
 
+def right_side(rule, one, result):
+    rule = re.split(one, rule)
+    if '!' in rule[0]:
+        return not result
+    return result
+
+
 def inv(q):
     return int(not q)
 
@@ -147,13 +154,18 @@ def count_one(one):
     if data['var'][one]:
         return True
     for rule in data['rules']:
+        if one in rule and one in data['rules'][rule]:
+            error("Endless loop: '{}'".format(rule))
         if one in data['rules'][rule]:
             if count_expresion(rule):
+                data['last_rule'] = data['rules'][rule]
                 return True
+    data['last_rule'] = data['rules'][rule]
     return False
 
 
 def count(all_var):
     for one in all_var:
-        data['result'][one] = count_one(one)
+        buff = count_one(one)
+        data['result'][one] = right_side(data['last_rule'], one, buff)
 

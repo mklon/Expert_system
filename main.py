@@ -8,7 +8,7 @@ except IOError:
 
 handle_input(f)
 count(data['request'])
-pprint.pprint(data)
+pprint.pprint(data['result'])
 
 
 
