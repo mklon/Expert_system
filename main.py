@@ -192,11 +192,11 @@ def main(argv):
             continue
         print('\033[95m------- ' + argv[i] + ' -------\033[0m')
         try:
+            clean()
             handle_input(f)
             count(data['request'])
             output()
             f.close()
-            clean()
         except ValueError as exc:
             print('\033[91m' + str(exc) + '\033[0m\n')
         except RecursionError as exc:
