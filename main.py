@@ -172,7 +172,7 @@ def output():
             print('\033[93m' + result + ': Undetermined\033[0m')
         if data['result'][result] == -1:
             print('\033[94m' + result + ': Impossible\033[0m')
-    print()
+    print('')
 
 
 def main(argv):
