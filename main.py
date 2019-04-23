@@ -175,6 +175,13 @@ def output():
     print('')
 
 
+def clean():
+    data['var'] = dict.fromkeys(string.ascii_uppercase, 0)
+    data['rules'] = {}
+    data['request'] = []
+    data['result'] = {}
+
+
 def main(argv):
     for i in range(1, len(argv)):
         try:
@@ -189,9 +196,11 @@ def main(argv):
             count(data['request'])
             output()
             f.close()
+            clean()
         except ValueError as exc:
             print('\033[91m' + str(exc) + '\033[0m\n')
-
+        except RecursionError as exc:
+            print('\033[91mInfinite loop! \033[0m\n')
 
 try:
     main(sys.argv)
